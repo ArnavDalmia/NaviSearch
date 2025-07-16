@@ -36,3 +36,38 @@ Once the hashmap is created, it saves to a file. After loading it, you’ll have
    ```bash
    git clone https://github.com/your-username/navisearch.git
    cd navisearch
+
+2. **Install Qt**:
+
+   - Download and install the Qt Framework from Qt's official site.
+   - After installation, make sure the Qt tools are added to your system’s path (this might be done automatically during the installation).
+   - You can also choose to install Qt Creator (an IDE from Qt) to make the development process easier, but it's optional.
+
+3. **Install nlohmann/json**:
+
+   - You can install the nlohmann/json library through vcpkg or manually add it to your project:
+
+4. **Build the Project**:
+
+   - Open the project in Qt Creator (or your preferred IDE).
+   - Build the project by clicking Build > Build Project.
+
+5. **Run the Application**
+
+
+## Contributing
+
+Feel free to fork the repo and submit pull requests! If you want to add new features, fix bugs, or improve documentation, go ahead and make a contribution.
+
+### How to Contribute:
+1. **Fork the repository** to your own GitHub account.
+2. **Create a new branch** for your feature or bug fix:
+   ```bash
+   git checkout -b my-new-feature
+3. Make your changes and commit them:
+   ```bash
+      git commit -m "Add a new feature"
+4. Push to your forked repo:
+   ```bash
+      git push origin my-new-feature
+5. Submit a PR!
