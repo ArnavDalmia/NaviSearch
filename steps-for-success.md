@@ -39,33 +39,58 @@ Build a robust C++ console application that scans directories, creates an effici
    - Handle JSON writing with proper error checking
 
 ### Expected JSON Output Format
+**File location**: `C:\Users\arnav\Documents\NaviSearch\[sanitized-directory-path]_YYYY-MM-DD_HH-MM-SS.json`
+
+**Example filenames:**
+- `C_Users_arnav_Documents_2025-08-01_14-30-15.json`
+- `D_Projects_Code_2025-08-01_15-45-22.json`
+- `E_BackupDrive_Photos_2025-08-01_16-12-08.json`
+
 ```json
 {
   "schema_version": 1,
-  "roots": ["C:/Users/foo", "D:/Projects"],
+  "roots": ["C:/Users/arnav/Documents"],
   "files_total": 15847,
   "unique_names": 12394,
   "build_seconds": 4.23,
   "hashmap": {
-    "readme.md": ["C:/proj1/readme.md", "D:/proj2/README.md"],
-    "main.cpp": ["C:/code/main.cpp"],
-    "config.json": ["C:/app/config.json", "D:/backup/config.json"]
+    "readme.md": ["C:/Users/arnav/Documents/proj1/readme.md", "C:/Users/arnav/Documents/proj2/README.md"],
+    "main.cpp": ["C:/Users/arnav/Documents/code/main.cpp"],
+    "config.json": ["C:/Users/arnav/Documents/app/config.json"]
   }
 }
 ```
 
+### User Workflow
+1. **Run executable**: `indexer.exe` (no command-line arguments needed)
+2. **Program prompts**: "Enter directory to map: "
+3. **User inputs**: Directory path (e.g., `C:\Users\arnav\Documents`)
+4. **Program scans** directory and creates hashmap with progress updates
+5. **Saves JSON** to hardcoded location: `C:\Users\arnav\Documents\NaviSearch\`
+6. **Output**: "File saved to: C:\Users\arnav\Documents\NaviSearch\C_Users_arnav_Documents_2025-08-01_14-30-15.json"
+
 ### Deliverables
 - **Console application**: `indexer.exe`
-- **Usage**: `indexer.exe "C:\Users" "D:\Projects"` → outputs `file_index.json`
-- **Error handling**: Graceful handling of permission denied, network drives, etc.
-- **Performance logging**: Console output showing scan progress
+- **Usage**: Simply run `indexer.exe` → program prompts for directory → creates descriptive JSON file
+- **Hardcoded save location**: `C:\Users\arnav\Documents\NaviSearch\` (auto-created if doesn't exist)
+- **Filename format**: `[sanitized-path]_YYYY-MM-DD_HH-MM-SS.json` (path-based + timestamped)
+- **Path sanitization**: Replaces `\` and `:` with `_` for valid filenames
+- **Error handling**: Graceful handling of permission denied, network drives, invalid paths
+- **Performance logging**: Console output showing scan progress and final "File saved!" message
 
 ### Success Criteria
-- [ ] Successfully scans multiple directory roots
-- [ ] Generates valid JSON with correct metrics
-- [ ] Handles duplicate filenames correctly
+- [ ] Program prompts user for directory input (no command-line args needed)
+- [ ] Successfully scans single directory root with recursive traversal
+- [ ] Generates valid JSON with correct metrics in specified schema format
+- [ ] Handles duplicate filenames correctly in hashmap structure
+- [ ] Saves JSON to hardcoded location: `C:\Users\arnav\Documents\NaviSearch\`
+- [ ] Creates descriptive filename based on scanned directory path
+- [ ] Sanitizes directory path for valid filename (replaces `\` and `:` with `_`)
+- [ ] Includes timestamp for uniqueness when same directory scanned multiple times
+- [ ] Auto-creates save directory if it doesn't exist
+- [ ] Displays "File saved!" confirmation message
 - [ ] Completes scan of 10,000+ files in reasonable time
-- [ ] Proper error handling for inaccessible directories
+- [ ] Proper error handling for inaccessible directories and invalid input
 
 ---
 
