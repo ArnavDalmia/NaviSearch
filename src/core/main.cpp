@@ -41,17 +41,23 @@ int main() {
     
     cout << "FOUND! Directory exists! Ready for indexing development." << std::endl;    
 
+    int folders = 0;
+    int files = 0;
 
     try{
         for (const auto& entry : std::filesystem::recursive_directory_iterator(dir)) {
             if (entry.is_regular_file()) {
                 cout << entry.path() << "\n";
+                files++;
                 }
             else if (entry.is_directory()){
                 cout << "Entering new Folder: " << entry.path() <<  "\n\n";
+                folders ++;
             }
 
             }
+
+            cout << "\n\n" << "Final Tally: " << "\n" << "Folders: " << folders << "\n" << "Files: " << files;
             
     }
     catch (exception except) {
