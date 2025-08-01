@@ -38,20 +38,25 @@ int main() {
         cout << "Error! Directory doesn't exist. Double check path, ensure it is the absolute path.";
         return 0;
     }
+    
+    cout << "FOUND! Directory exists! Ready for indexing development." << std::endl;    
+
 
     try{
         for (const auto& entry : std::filesystem::recursive_directory_iterator(dir)) {
             if (entry.is_regular_file()) {
                 cout << entry.path() << "\n";
                 }
+            else if (entry.is_directory()){
+                cout << "Entering new Folder: " << entry.path() <<  "\n\n";
             }
+
+            }
+            
     }
     catch (exception except) {
-        cout << "Error! Error Message: " + except;
+        cout << "Error! Error Message: ";
     }
 
-    
-
-    cout << "FOUND! Directory exists! Ready for indexing development." << std::endl;    
     return 0;
 }
