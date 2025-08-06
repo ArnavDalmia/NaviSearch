@@ -44,6 +44,7 @@ int main() {
     int folders = 0;
     int files = 0;
 
+    cout << "Found Files: \n";
     try{
         for (const auto& entry : std::filesystem::recursive_directory_iterator(dir)) {
             if (entry.is_regular_file()) {
@@ -51,13 +52,13 @@ int main() {
                 files++;
                 }
             else if (entry.is_directory()){
-                cout << "Entering new Folder: " << entry.path() <<  "\n\n";
+                cout << "\n\nNew Folder: " << entry.path() <<  "\n";
                 folders ++;
             }
 
             }
 
-            cout << "\n\n" << "Final Tally: " << "\n" << "Folders: " << folders << "\n" << "Files: " << files;
+            cout << "\n\n" << "Final Tally: " << "\n" << "Inner Folders: " << folders << "\n" << "Files: " << files;
             
     }
     catch (exception except) {
