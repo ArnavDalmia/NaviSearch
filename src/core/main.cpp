@@ -46,7 +46,8 @@ int main() {
 
     cout << "Found Files: \n";
     try{
-        for (const auto& entry : std::filesystem::recursive_directory_iterator(dir)) {
+        for (const auto& entry : std::filesystem::recursive_directory_iterator(dir, 
+            std::filesystem::directory_options::skip_permission_denied)) {
             if (entry.is_regular_file()) {
                 cout << entry.path() << "\n";
                 files++;
@@ -58,11 +59,16 @@ int main() {
 
             }
 
-            cout << "\n\n" << "Final Tally: " << "\n" << "Inner Folders: " << folders << "\n" << "Files: " << files;
+            cout << "\n\n" << "Final Tally: " << "\n" << "Inner Folders: " << folders << "\n" << "Files: " << files << endl;
             
     }
-    catch (exception except) {
-        cout << "Error! Error Message: ";
+    catch (const std::filesystem::filesystem_error& ex) {
+        cout << "\nFilesystem error: " << ex.what() << endl;
+        cout << "Partial results - Inner Folders: " << folders << ", Files: " << files << endl;
+    }
+    catch (const std::exception& ex) {
+        cout << "\nGeneral error: " << ex.what() << endl;
+        cout << "Partial results - Inner Folders: " << folders << ", Files: " << files << endl;
     }
 
     return 0;
