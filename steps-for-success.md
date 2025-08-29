@@ -72,7 +72,7 @@ Build a robust C++ console application that scans directories, creates an effici
 ### Deliverables
 - **Console application**: `indexer.exe`
 - **Usage**: Simply run `indexer.exe` → program prompts for directory → creates descriptive JSON file
-- **Hardcoded save location**: `C:\Users\arnav\Documents\NaviSearch\` (auto-created if doesn't exist)
+- **Hardcoded save location**: `C:\Users\arnav\Documents\NaviSearch\Maps` (auto-created if doesn't exist)
 - **Filename format**: `[sanitized-path]_YYYY-MM-DD_HH-MM-SS.json` (path-based + timestamped)
 - **Path sanitization**: Replaces `\` and `:` with `_` for valid filenames
 - **Error handling**: Graceful handling of permission denied, network drives, invalid paths

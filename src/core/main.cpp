@@ -2,6 +2,9 @@
 #include <filesystem>
 #include <vector>
 #include <string>
+#include <unordered_map>
+#include <unordered_set>
+#include <algorithm> 
 
 // Phase 1: Basic setup test
 // int main(int argc, char* argv[]) {
@@ -43,12 +46,22 @@ int main() {
 
     int folders = 0;
     int files = 0;
+    auto start_time = chrono::steady_clock::now();
+    unordered_map<string, vector<string>> file_index;
+    unordered_set<string> unique_filenames;
+
 
     cout << "Found Files: \n";
     try{
-        for (const auto& entry : std::filesystem::recursive_directory_iterator(dir, 
-            std::filesystem::directory_options::skip_permission_denied)) {
+        for (const auto& entry : std::filesystem::recursive_directory_iterator(dir,filesystem::directory_options::skip_permission_denied)) {
             if (entry.is_regular_file()) {
+                
+                string filename = entry.path().filename().string();
+                string lowercase_filename = filename;
+                transform(lowercase_filename.begin(), lowercase_filename.end(), lowercase_filename.begin(), ::tolower);
+                file_index[lowercase_filename].push_back(entry.path().string()); //adding to unordered map
+                unique_filenames.insert(lowercase_filename); //sets only allow unique filenames
+
                 cout << entry.path() << "\n";
                 files++;
                 }
@@ -57,10 +70,14 @@ int main() {
                 folders ++;
             }
 
-            }
+        }
+        auto end_time = chrono::steady_clock::now();
+        cout << "\n\n" << "Final Tally: " << "\n" << "Inner Folders: " << folders << "\n" << "Total Files: " << files << endl;
+        auto duration = chrono::duration_cast<chrono::milliseconds>(end_time - start_time);
+        double build_seconds = duration.count() / 1000.0;
+        cout << "Unique Files: " << unique_filenames.size() << endl;
+        cout <<  "Build Time: " << build_seconds << endl;
 
-            cout << "\n\n" << "Final Tally: " << "\n" << "Inner Folders: " << folders << "\n" << "Files: " << files << endl;
-            
     }
     catch (const std::filesystem::filesystem_error& ex) {
         cout << "\nFilesystem error: " << ex.what() << endl;
