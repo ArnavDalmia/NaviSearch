@@ -104,6 +104,19 @@
     "sstream": "cpp",
     "stdexcept": "cpp",
     "streambuf": "cpp",
-    "typeinfo": "cpp"
+    "typeinfo": "cpp",
+    "any": "cpp",
+    "charconv": "cpp",
+    "chrono": "cpp",
+    "cstring": "cpp",
+    "forward_list": "cpp",
+    "map": "cpp",
+    "unordered_set": "cpp",
+    "format": "cpp",
+    "fstream": "cpp",
+    "ranges": "cpp",
+    "span": "cpp",
+    "valarray": "cpp",
+    "variant": "cpp"
   }
 }

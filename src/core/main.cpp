@@ -5,6 +5,12 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <algorithm> 
+#include <nlohmann/json.hpp>
+#include <fstream>
+#include <chrono>
+#include <iomanip>
+#include <sstream>
+using json = nlohmann::json;
 
 // Phase 1: Basic setup test
 // int main(int argc, char* argv[]) {
@@ -32,6 +38,45 @@
 
 using namespace std;
 
+// Function to sanitize strings for UTF-8 compliance
+string sanitize_utf8(const string& input) {
+    string result;
+    result.reserve(input.size() * 2); // Reserve more space for potential expansions
+    
+    for (size_t i = 0; i < input.size(); ++i) {
+        unsigned char c = input[i];
+        
+        // Standard ASCII printable characters (including space, punctuation)
+        if (c >= 32 && c <= 126) {
+            result += c;
+        } 
+        // Handle common Windows-1252 characters that appear in filenames
+        else if (c == 0x92) {
+            // Right single quotation mark - replace with standard apostrophe
+            result += '\'';
+        } else if (c == 0x93 || c == 0x94) {
+            // Left/right double quotation marks - replace with standard quotes  
+            result += '"';
+        } else if (c == 0x91) {
+            // Left single quotation mark - replace with standard apostrophe
+            result += '\'';
+        } else if (c == 0x96 || c == 0x97) {
+            // En dash / Em dash - replace with hyphen
+            result += '-';
+        }
+        // Skip or replace other problematic characters
+        else if (c < 32) {
+            // Control characters - replace with space
+            result += ' ';
+        } else {
+            // Other high-bit characters - try to preserve if possible, otherwise replace
+            // For safety, replace with underscore
+            result += '_';
+        }
+    }
+    return result;
+}
+
 int main() {
     string dir;
     cout << "Enter Dir to scan: ";
@@ -57,26 +102,100 @@ int main() {
             if (entry.is_regular_file()) {
                 
                 string filename = entry.path().filename().string();
-                string lowercase_filename = filename;
+                string path_str = entry.path().string();
+                
+                // Sanitize both filename and full path for UTF-8 compliance
+                string safe_filename = sanitize_utf8(filename);
+                string safe_path = sanitize_utf8(path_str);
+                
+                // Debug output for problematic filenames
+                if (filename != safe_filename) {
+                    cout << "Sanitized filename: " << filename << " -> " << safe_filename << endl;
+                }
+                
+                string lowercase_filename = safe_filename;
                 transform(lowercase_filename.begin(), lowercase_filename.end(), lowercase_filename.begin(), ::tolower);
-                file_index[lowercase_filename].push_back(entry.path().string()); //adding to unordered map
+                file_index[lowercase_filename].push_back(safe_path); //adding to unordered map
                 unique_filenames.insert(lowercase_filename); //sets only allow unique filenames
 
-                cout << entry.path() << "\n";
+                //cout << entry.path() << "\n";
                 files++;
                 }
             else if (entry.is_directory()){
-                cout << "\n\nNew Folder: " << entry.path() <<  "\n";
+                //cout << "\n\nNew Folder: " << entry.path() <<  "\n";
                 folders ++;
             }
 
         }
         auto end_time = chrono::steady_clock::now();
-        cout << "\n\n" << "Final Tally: " << "\n" << "Inner Folders: " << folders << "\n" << "Total Files: " << files << endl;
         auto duration = chrono::duration_cast<chrono::milliseconds>(end_time - start_time);
         double build_seconds = duration.count() / 1000.0;
-        cout << "Unique Files: " << unique_filenames.size() << endl;
-        cout <<  "Build Time: " << build_seconds << endl;
+        
+        // Deprecated testing string output
+        //cout << "\n\n" << "Final Tally: " << "\n" << "Inner Folders: " << folders << "\n" << "Total Files: " << files << endl;
+        //cout << "Unique Files: " << unique_filenames.size() << endl;
+        //cout <<  "Build Time: " << build_seconds << endl;
+
+
+        json output = {
+            {"schema_version", 1},
+            {"roots", {dir}},
+            {"files_total", files},
+            {"folders_total", folders},
+            {"unique_names", unique_filenames.size()},
+            {"build_seconds", build_seconds},
+            {"hashmap", file_index}
+        };
+
+        string save_dir = "C:\\Users\\arnav\\Documents\\GitHub\\NaviSearch\\Maps"; //replace
+        filesystem::create_directories(save_dir);
+
+        string sanitized_path = dir; //cleaning the dir for the save file
+        replace(sanitized_path.begin(), sanitized_path.end(), '\\', '_');
+        replace(sanitized_path.begin(), sanitized_path.end(), ':', '_');
+        replace(sanitized_path.begin(), sanitized_path.end(), '/', '_');
+
+        auto now = chrono::system_clock::now(); //for the timestamp
+        auto time_t = chrono::system_clock::to_time_t(now);
+
+        string pattern = save_dir + "\\" + sanitized_path + "_"; //basic first part of the saved file name
+        bool existing_found = false;
+        string existing_file = "";
+        
+        for (const auto& entry : filesystem::directory_iterator(save_dir)) {
+            if (entry.is_regular_file() && entry.path().extension() == ".json") {
+                string filename_str = entry.path().filename().string();
+                if (filename_str.substr(0, pattern.length() - save_dir.length() - 1) == sanitized_path + "_") {
+                    existing_found = true;
+                    existing_file = entry.path().string();
+                    break;
+                }
+            }
+        }
+        
+        if (existing_found) {
+            cout << "\nWarning: A map for this path already exists: " << filesystem::path(existing_file).filename().string() << endl;
+            cout << "Do you want to create a new map? (y/n): ";
+            string response;
+            getline(cin, response);
+            
+            if (response != "y" && response != "Y" && response != "yes" && response != "Yes") {
+                cout << "Operation cancelled. Using existing map." << endl;
+                return 0;
+            }
+            cout << "Creating new map..." << endl;
+        }
+
+        stringstream timestamp;
+        timestamp << put_time(localtime(&time_t), "%Y-%m-%d_%H-%M-%S");
+
+        string filename = save_dir + "\\" + sanitized_path + "_" + timestamp.str() + ".json";
+
+        // Create and save json file
+        ofstream file(filename);
+        file << output.dump(3);
+        file.close();
+        cout << "\nFile saved to: " << filename << endl;
 
     }
     catch (const std::filesystem::filesystem_error& ex) {

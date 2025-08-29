@@ -13,9 +13,8 @@ add_executable(indexer
     src/core/main.cpp
 )
 
-# For future: add nlohmann/json when we're ready
-# find_package(nlohmann_json 3.2.0 REQUIRED)
-# target_link_libraries(indexer nlohmann_json::nlohmann_json)
+# JSON library for Phase 2 (Header-only)
+# nlohmann/json.hpp should be in include/nlohmann/json.hpp
 
 # Compiler-specific options
 if(MSVC)
