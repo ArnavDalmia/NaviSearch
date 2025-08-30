@@ -46,31 +46,27 @@ string sanitize_utf8(const string& input) {
     for (size_t i = 0; i < input.size(); ++i) {
         unsigned char c = input[i];
         
-        // Standard ASCII printable characters (including space, punctuation)
+        // Standard ascii
         if (c >= 32 && c <= 126) {
             result += c;
         } 
+        // Logic below copied from github, search up UTF-8 compliance sanitization function c++, and you can then grab all the conditions
+        
         // Handle common Windows-1252 characters that appear in filenames
-        else if (c == 0x92) {
-            // Right single quotation mark - replace with standard apostrophe
+        else if (c == 0x92) { // right single quotation mark
             result += '\'';
-        } else if (c == 0x93 || c == 0x94) {
-            // Left/right double quotation marks - replace with standard quotes  
+        } else if (c == 0x93 || c == 0x94) { // Left/right double quotation marks
             result += '"';
-        } else if (c == 0x91) {
-            // Left single quotation mark - replace with standard apostrophe
+        } else if (c == 0x91) { // Left single quotation mark
             result += '\'';
-        } else if (c == 0x96 || c == 0x97) {
-            // En dash / Em dash - replace with hyphen
+        } else if (c == 0x96 || c == 0x97) { //en and em dashes
             result += '-';
         }
         // Skip or replace other problematic characters
         else if (c < 32) {
-            // Control characters - replace with space
             result += ' ';
         } else {
-            // Other high-bit characters - try to preserve if possible, otherwise replace
-            // For safety, replace with underscore
+            // fallback
             result += '_';
         }
     }
