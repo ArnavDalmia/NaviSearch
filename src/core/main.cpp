@@ -10,6 +10,11 @@
 #include <chrono>
 #include <iomanip>
 #include <sstream>
+#include <thread>
+#include <queue>
+#include <mutex>
+#include <condition_variable>
+#include <atomic>
 using json = nlohmann::json;
 
 // Phase 1: Basic setup test
@@ -97,8 +102,17 @@ int main() {
         for (const auto& entry : std::filesystem::recursive_directory_iterator(dir,filesystem::directory_options::skip_permission_denied)) {
             if (entry.is_regular_file()) {
                 
-                string filename = entry.path().filename().string();
-                string path_str = entry.path().string();
+                // Use UTF-8 string methods to avoid encoding issues
+                string filename, path_str;
+                try {
+                    filename = entry.path().filename().u8string();
+                    path_str = entry.path().u8string();
+                } catch (...) {
+                    // Fallback for problematic filenames
+                    filename = "problematic_filename_" + to_string(files);
+                    path_str = entry.path().string();
+                    cout << "Skipped problematic filename, assigned: " << filename << endl;
+                }
                 
                 // Sanitize both filename and full path for UTF-8 compliance
                 string safe_filename = sanitize_utf8(filename);
@@ -106,7 +120,7 @@ int main() {
                 
                 // Debug output for problematic filenames
                 if (filename != safe_filename) {
-                    cout << "Sanitized filename: " << filename << " -> " << safe_filename << endl;
+                    cout << "Sanitized: " << safe_filename << endl;
                 }
                 
                 string lowercase_filename = safe_filename;
@@ -138,7 +152,7 @@ int main() {
             {"roots", {dir}},
             {"files_total", files},
             {"folders_total", folders},
-            {"unique_names", unique_filenames.size()},
+            {"unique_filenames", unique_filenames.size()},
             {"build_seconds", build_seconds},
             {"hashmap", file_index}
         };
