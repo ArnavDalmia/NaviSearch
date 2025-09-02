@@ -1,0 +1,3 @@
+C:/Users/arnav/Documents/GitHub/NaviSearch/threadbuild/CMakeFiles/indexer.dir
+C:/Users/arnav/Documents/GitHub/NaviSearch/threadbuild/CMakeFiles/ALL_BUILD.dir
+C:/Users/arnav/Documents/GitHub/NaviSearch/threadbuild/CMakeFiles/ZERO_CHECK.dir
