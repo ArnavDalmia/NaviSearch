@@ -1,0 +1,38 @@
+{
+   "build_seconds": 0.004,
+   "files_total": 8,
+   "folders_total": 0,
+   "hashmap": {
+      "27290988057132093.pdf": [
+         "C:\\Users\\arnav\\Documents\\Resume\\2B\\CoverLetters\\27290988057132093.pdf"
+      ],
+      "3435480243841156.pdf": [
+         "C:\\Users\\arnav\\Documents\\Resume\\2B\\CoverLetters\\3435480243841156.pdf"
+      ],
+      "assort.pdf": [
+         "C:\\Users\\arnav\\Documents\\Resume\\2B\\CoverLetters\\assort.pdf"
+      ],
+      "cresta.pdf": [
+         "C:\\Users\\arnav\\Documents\\Resume\\2B\\CoverLetters\\cresta.pdf"
+      ],
+      "enam.pdf": [
+         "C:\\Users\\arnav\\Documents\\Resume\\2B\\CoverLetters\\enam.pdf"
+      ],
+      "epic.pdf": [
+         "C:\\Users\\arnav\\Documents\\Resume\\2B\\CoverLetters\\epic.pdf"
+      ],
+      "open.pdf": [
+         "C:\\Users\\arnav\\Documents\\Resume\\2B\\CoverLetters\\open.pdf"
+      ],
+      "story.pdf": [
+         "C:\\Users\\arnav\\Documents\\Resume\\2B\\CoverLetters\\story.pdf"
+      ]
+   },
+   "num_threads_used": 8,
+   "roots": [
+      "C:\\Users\\arnav\\Documents\\Resume\\2B\\CoverLetters"
+   ],
+   "schema_version": 1,
+   "threading_version": "Part1_Basic",
+   "unique_filenames": 8
+}

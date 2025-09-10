@@ -317,6 +317,11 @@ int main() {
             if (!filesystem::exists("..\\build-phase2\\Debug\\indexer.exe")) {
                 indexer_command = "indexer.exe";
             }
+            int result = system(indexer_command.c_str());
+                if (result != 0) { //basic handeling
+                    cout << "Warning: Could not launch indexer (exit code: " << result << ")" << endl;
+                    return 0;
+                }
             
             cache_entries = loader.scan_and_update_cache();
         }
@@ -327,7 +332,7 @@ int main() {
         string input;
         
         while (true) { //looped for validated inputs
-            cout << "Enter the number of the map to load (1-" << cache_entries.size() << ") or 'ncreate' to create new map: ";
+            cout << "Enter the number of the map to load (0-" << cache_entries.size() << ") or 'ncreate' to create new map: ";
             cin >> input;
             
             if (input == "ncreate") { //reps Navi Create Map feature, on the spot new map creation
