@@ -3,7 +3,6 @@
 #include <vector>
 #include <string>
 #include <unordered_map>
-#include <unordered_set>
 #include <set>
 #include <fstream>
 #include <chrono>
@@ -304,72 +303,73 @@ public:
 
 int main() {
     cout << "=== NaviSearch Phase 2 - Loader Program ===" << endl;
-    cout << "Simple Threading Loader with Cache Management" << endl << endl;
+    //cout << "Simple Threading Loader with Cache Management" << endl << endl;
     
     NaviSearchLoader loader;
     
-    // Main program loop - allows returning to map selection
     while (true) {
-        // Scan and update cache
         auto cache_entries = loader.scan_and_update_cache();
         
-        if (cache_entries.empty()) {
+        if (cache_entries.empty()) { //basically if we have no maps
             cout << "\nNo map files found in the Maps directory." << endl;
-            cout << "Please run the indexer program first to create some map files." << endl;
-            return 0;
+            //cout << "Please run the indexer program first to create some map files." << endl;
+            
+            cout << "Launching indexer to create new map..." << endl;
+                
+            string indexer_command = "..\\build-phase2\\Debug\\indexer.exe";
+            if (!filesystem::exists("..\\build-phase2\\Debug\\indexer.exe")) {
+                indexer_command = "indexer.exe";
+            }
+            
+            cache_entries = loader.scan_and_update_cache();
         }
         
-        // Display available files
         loader.display_cache(cache_entries);
         
-        // Interactive selection with validation loop
         int selection = -1;
         string input;
         
-        while (true) {
+        while (true) { //looped for validated inputs
             cout << "Enter the number of the map to load (1-" << cache_entries.size() << ") or 'ncreate' to create new map: ";
             cin >> input;
             
-            // Check for ncreate command
-            if (input == "ncreate") {
+            if (input == "ncreate") { //reps Navi Create Map feature, on the spot new map creation
                 cout << "Launching indexer to create new map..." << endl;
                 
-                // Try to run indexer.exe from the same directory or build directory
+                // Try to run indexer.exe from build directory - will seperate later on
                 string indexer_command = "..\\build-phase2\\Debug\\indexer.exe";
                 if (!filesystem::exists("..\\build-phase2\\Debug\\indexer.exe")) {
-                    indexer_command = "indexer.exe";  // Try current directory
+                    indexer_command = "indexer.exe";
                 }
                 
                 int result = system(indexer_command.c_str());
-                if (result != 0) {
+                if (result != 0) { //basic handeling
                     cout << "Warning: Could not launch indexer (exit code: " << result << ")" << endl;
-                    cout << "Please make sure indexer.exe is built and accessible." << endl;
                 }
                 
-                // Rescan cache after indexer runs
-                cout << "\nRescanning for new map files..." << endl;
+                //cout << "\nRescanning for new map files..." << endl;
                 cache_entries = loader.scan_and_update_cache();
                 
+                // no map exists even after the run weird, shouldn't happen, need to update later
                 if (cache_entries.empty()) {
                     cout << "No map files found after indexer run." << endl;
                     return 0;
                 }
                 
-                // Display updated list
                 loader.display_cache(cache_entries);
-                continue;  // Ask for selection again
+                continue;
             }
 
-            if (input == "q" || input == "quit" || input == "Quit"){
+            if (input == "q" || input == "quit" || input == "Quit"){ //closing functionality
                 cout << "Thanks for using NaviSearch!" << endl;
                 return 0;
             }
             
-            // Try to parse as number
+            // if not a built in command continue to validate input
             try {
-                selection = stoi(input);
+                selection = stoi(input); //built in parse
                 if (selection >= 1 && selection <= static_cast<int>(cache_entries.size())) {
-                    break;  // Valid selection, exit loop
+                    break;  // Valid selection
                 } else {
                     cout << "Invalid selection. Please enter a number between 1 and " << cache_entries.size() << endl;
                 }
@@ -378,17 +378,18 @@ int main() {
             }
         }
         
-        // Load selected map
+        // After validating input load selected map
         const auto& selected_entry = cache_entries[selection - 1];
         if (!loader.load_map_file(selected_entry.saved_filename)) {
             cout << "Failed to load map file" << endl;
-            continue;  // Go back to map selection instead of exiting
+            continue;  // Go back to map selection instead of exiting - shouldn't happpen, file corruption beyond scope
         }
         
-        // Interactive search loop
-        cin.ignore(); // Clear the newline from previous input
+        cin.ignore(); // Clear the newline from previous input - redundant
+        
+        //dummy string for user input filenames
         string query;
-        bool back_to_maps = false;
+        bool back_to_maps = false; //loop bool
         
         cout << "\n=== Search Interface ===" << endl;
         cout << "Enter filename to search, 'nback' to return to map selection, or 'quit' to exit: ";
@@ -410,16 +411,16 @@ int main() {
                 continue;
             }
             
-            auto results = loader.search(query);
+            auto results = loader.search(query); //custom search exact match
             
             if (results.empty()) {
                 cout << "No files found matching: " << query << endl;
             } else {
                 cout << "Found " << results.size() << " file(s):" << endl;
-                for (size_t i = 0; i < results.size() && i < 10; ++i) {
+                for (size_t i = 0; i < results.size() && i < 25; ++i) {
                     cout << "  " << (i + 1) << ". " << results[i] << endl;
                 }
-                if (results.size() > 10) {
+                if (results.size() > 25) {
                     cout << "  ... and " << (results.size() - 10) << " more" << endl;
                 }
             }
