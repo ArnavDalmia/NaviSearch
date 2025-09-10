@@ -308,67 +308,130 @@ int main() {
     
     NaviSearchLoader loader;
     
-    // Scan and update cache
-    auto cache_entries = loader.scan_and_update_cache();
-    
-    if (cache_entries.empty()) {
-        cout << "\nNo map files found in the Maps directory." << endl;
-        cout << "Please run the indexer program first to create some map files." << endl;
-        return 0;
-    }
-    
-    // Display available files
-    loader.display_cache(cache_entries);
-    
-    // Interactive selection
-    cout << "Enter the number of the map to load (1-" << cache_entries.size() << "): ";
-    int selection;
-    cin >> selection;
-    
-    if (selection < 1 || selection > static_cast<int>(cache_entries.size())) {
-        cout << "Invalid selection" << endl;
-        return 1;
-    }
-    
-    // Load selected map
-    const auto& selected_entry = cache_entries[selection - 1];
-    if (!loader.load_map_file(selected_entry.saved_filename)) {
-        cout << "Failed to load map file" << endl;
-        return 1;
-    }
-    
-    // Interactive search loop
-    cin.ignore(); // Clear the newline from previous input
-    string query;
-    
-    cout << "\n=== Search Interface ===" << endl;
-    cout << "Enter filename to search (or 'quit' to exit): ";
-    
-    while (getline(cin, query)) {
-        if (query == "quit" || query == "exit") {
-            break;
+    // Main program loop - allows returning to map selection
+    while (true) {
+        // Scan and update cache
+        auto cache_entries = loader.scan_and_update_cache();
+        
+        if (cache_entries.empty()) {
+            cout << "\nNo map files found in the Maps directory." << endl;
+            cout << "Please run the indexer program first to create some map files." << endl;
+            return 0;
         }
         
-        if (query.empty()) {
-            cout << "Enter filename to search (or 'quit' to exit): ";
-            continue;
+        // Display available files
+        loader.display_cache(cache_entries);
+        
+        // Interactive selection with validation loop
+        int selection = -1;
+        string input;
+        
+        while (true) {
+            cout << "Enter the number of the map to load (1-" << cache_entries.size() << ") or 'ncreate' to create new map: ";
+            cin >> input;
+            
+            // Check for ncreate command
+            if (input == "ncreate") {
+                cout << "Launching indexer to create new map..." << endl;
+                
+                // Try to run indexer.exe from the same directory or build directory
+                string indexer_command = "..\\build-phase2\\Debug\\indexer.exe";
+                if (!filesystem::exists("..\\build-phase2\\Debug\\indexer.exe")) {
+                    indexer_command = "indexer.exe";  // Try current directory
+                }
+                
+                int result = system(indexer_command.c_str());
+                if (result != 0) {
+                    cout << "Warning: Could not launch indexer (exit code: " << result << ")" << endl;
+                    cout << "Please make sure indexer.exe is built and accessible." << endl;
+                }
+                
+                // Rescan cache after indexer runs
+                cout << "\nRescanning for new map files..." << endl;
+                cache_entries = loader.scan_and_update_cache();
+                
+                if (cache_entries.empty()) {
+                    cout << "No map files found after indexer run." << endl;
+                    return 0;
+                }
+                
+                // Display updated list
+                loader.display_cache(cache_entries);
+                continue;  // Ask for selection again
+            }
+
+            if (input == "q" || input == "quit" || input == "Quit"){
+                cout << "Thanks for using NaviSearch!" << endl;
+                return 0;
+            }
+            
+            // Try to parse as number
+            try {
+                selection = stoi(input);
+                if (selection >= 1 && selection <= static_cast<int>(cache_entries.size())) {
+                    break;  // Valid selection, exit loop
+                } else {
+                    cout << "Invalid selection. Please enter a number between 1 and " << cache_entries.size() << endl;
+                }
+            } catch (const exception&) {
+                cout << "Invalid input. Please enter a number between 1 and " << cache_entries.size() << " or 'ncreate'" << endl;
+            }
         }
         
-        auto results = loader.search(query);
+        // Load selected map
+        const auto& selected_entry = cache_entries[selection - 1];
+        if (!loader.load_map_file(selected_entry.saved_filename)) {
+            cout << "Failed to load map file" << endl;
+            continue;  // Go back to map selection instead of exiting
+        }
         
-        if (results.empty()) {
-            cout << "No files found matching: " << query << endl;
+        // Interactive search loop
+        cin.ignore(); // Clear the newline from previous input
+        string query;
+        bool back_to_maps = false;
+        
+        cout << "\n=== Search Interface ===" << endl;
+        cout << "Enter filename to search, 'nback' to return to map selection, or 'quit' to exit: ";
+        
+        while (getline(cin, query)) {
+            if (query == "quit" || query == "exit") {
+                cout << "Thanks for using NaviSearch!" << endl;
+                return 0;
+            }
+            
+            if (query == "nback") {
+                cout << "Returning to map selection..." << endl;
+                back_to_maps = true;
+                break;
+            }
+            
+            if (query.empty()) {
+                cout << "Enter filename to search, 'nback' to return to map selection, or 'quit' to exit: ";
+                continue;
+            }
+            
+            auto results = loader.search(query);
+            
+            if (results.empty()) {
+                cout << "No files found matching: " << query << endl;
+            } else {
+                cout << "Found " << results.size() << " file(s):" << endl;
+                for (size_t i = 0; i < results.size() && i < 10; ++i) {
+                    cout << "  " << (i + 1) << ". " << results[i] << endl;
+                }
+                if (results.size() > 10) {
+                    cout << "  ... and " << (results.size() - 10) << " more" << endl;
+                }
+            }
+            
+            cout << "\nEnter filename to search, 'nback' to return to map selection, or 'quit' to exit: ";
+        }
+        
+        if (back_to_maps) {
+            continue;  // Go back to the outer loop (map selection)
         } else {
-            cout << "Found " << results.size() << " file(s):" << endl;
-            for (size_t i = 0; i < results.size() && i < 10; ++i) {
-                cout << "  " << (i + 1) << ". " << results[i] << endl;
-            }
-            if (results.size() > 10) {
-                cout << "  ... and " << (results.size() - 10) << " more" << endl;
-            }
+            break;  // Exit the program
         }
-        
-        cout << "\nEnter filename to search (or 'quit' to exit): ";
     }
     
     cout << "Thanks for using NaviSearch!" << endl;

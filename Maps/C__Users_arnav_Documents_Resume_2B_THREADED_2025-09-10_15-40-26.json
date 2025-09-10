@@ -1,0 +1,56 @@
+{
+   "build_seconds": 0.098,
+   "files_total": 14,
+   "folders_total": 1,
+   "hashmap": {
+      "27290988057132093.pdf": [
+         "C:\\Users\\arnav\\Documents\\Resume\\2B\\CoverLetters\\27290988057132093.pdf"
+      ],
+      "3435480243841156.pdf": [
+         "C:\\Users\\arnav\\Documents\\Resume\\2B\\CoverLetters\\3435480243841156.pdf"
+      ],
+      "assort.pdf": [
+         "C:\\Users\\arnav\\Documents\\Resume\\2B\\CoverLetters\\assort.pdf"
+      ],
+      "backend.pdf": [
+         "C:\\Users\\arnav\\Documents\\Resume\\2B\\Backend.pdf"
+      ],
+      "cresta.pdf": [
+         "C:\\Users\\arnav\\Documents\\Resume\\2B\\CoverLetters\\cresta.pdf"
+      ],
+      "data.pdf": [
+         "C:\\Users\\arnav\\Documents\\Resume\\2B\\data.pdf"
+      ],
+      "dotnet.pdf": [
+         "C:\\Users\\arnav\\Documents\\Resume\\2B\\dotnet.pdf"
+      ],
+      "enam.pdf": [
+         "C:\\Users\\arnav\\Documents\\Resume\\2B\\CoverLetters\\enam.pdf"
+      ],
+      "epic.pdf": [
+         "C:\\Users\\arnav\\Documents\\Resume\\2B\\CoverLetters\\epic.pdf"
+      ],
+      "fs.pdf": [
+         "C:\\Users\\arnav\\Documents\\Resume\\2B\\fs.pdf"
+      ],
+      "ml.pdf": [
+         "C:\\Users\\arnav\\Documents\\Resume\\2B\\ml.pdf"
+      ],
+      "open.pdf": [
+         "C:\\Users\\arnav\\Documents\\Resume\\2B\\CoverLetters\\open.pdf"
+      ],
+      "story.pdf": [
+         "C:\\Users\\arnav\\Documents\\Resume\\2B\\CoverLetters\\story.pdf"
+      ],
+      "transcript.pdf": [
+         "C:\\Users\\arnav\\Documents\\Resume\\2B\\transcript.pdf"
+      ]
+   },
+   "num_threads_used": 8,
+   "roots": [
+      "C:\\Users\\arnav\\Documents\\Resume\\2B"
+   ],
+   "schema_version": 1,
+   "threading_version": "Part1_Basic",
+   "unique_filenames": 14
+}

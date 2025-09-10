@@ -1,13 +1,20 @@
 {
   "cache_entries": [
     {
-      "created": "2025-09-04 19:28:04",
+      "created": "2025-09-10 15:40:26",
+      "file_size_mb": 0.001697540283203125,
+      "files_total": 14,
+      "original_dir": "C:\\Users\\arnav\\Documents\\Resume\\2B",
+      "saved_filename": "C__Users_arnav_Documents_Resume_2B_THREADED_2025-09-10_15-40-26.json"
+    },
+    {
+      "created": "2025-09-10 15:36:10",
       "file_size_mb": 0.22829055786132813,
       "files_total": 1401,
       "original_dir": "c:\\Users\\arnav\\Downloads",
       "saved_filename": "c__Users_arnav_Downloads_THREADED_2025-08-30_17-41-17.json"
     }
   ],
-  "last_updated": "2025-09-10 11:31:58",
+  "last_updated": "2025-09-10 15:44:58",
   "schema_version": 1
 }
