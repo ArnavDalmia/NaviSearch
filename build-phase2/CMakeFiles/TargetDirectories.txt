@@ -1,0 +1,4 @@
+C:/Users/arnav/Documents/GitHub/NaviSearch/build-phase2/CMakeFiles/indexer.dir
+C:/Users/arnav/Documents/GitHub/NaviSearch/build-phase2/CMakeFiles/loader.dir
+C:/Users/arnav/Documents/GitHub/NaviSearch/build-phase2/CMakeFiles/ALL_BUILD.dir
+C:/Users/arnav/Documents/GitHub/NaviSearch/build-phase2/CMakeFiles/ZERO_CHECK.dir
