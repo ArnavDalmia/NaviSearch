@@ -56,7 +56,7 @@ public:
         filesystem::create_directories(maps_directory_);
     }
     
-    // Load or create cache metadata
+    // load/create cache metadata
     vector<CacheMetadata> load_cache_metadata() {
         vector<CacheMetadata> cache_entries;
         
@@ -81,7 +81,7 @@ public:
         return cache_entries;
     }
     
-    // Save cache metadata
+    // save cache
     void save_cache_metadata(const vector<CacheMetadata>& cache_entries) {
         try {
             json cache_json = {
@@ -102,7 +102,7 @@ public:
         }
     }
     
-    // Scan existing map files and update cache
+    // scans the map and updates local cache
     vector<CacheMetadata> scan_and_update_cache() {
         vector<CacheMetadata> cache_entries = load_cache_metadata();
         vector<CacheMetadata> updated_cache;
@@ -114,19 +114,18 @@ public:
             return updated_cache;
         }
         
-        // Track which files we've seen
         set<string> existing_files;
         
         for (const auto& entry : filesystem::directory_iterator(maps_directory_)) {
             if (entry.is_regular_file() && entry.path().extension() == ".json") {
                 string filename = entry.path().filename().string();
                 
-                // Skip the cache file itself
+                // skip cache file
                 if (filename == ".metadata_cache.json") continue;
                 
                 existing_files.insert(filename);
                 
-                // Check if this file is already in cache
+                // Check file existance in cache
                 bool found_in_cache = false;
                 for (const auto& cached : cache_entries) {
                     if (cached.saved_filename == filename) {
@@ -136,7 +135,7 @@ public:
                     }
                 }
                 
-                // If not in cache, try to extract metadata from the file
+                // if not,  try to extract metadata from the file
                 if (!found_in_cache) {
                     cout << "New file found: " << filename << ", extracting metadata..." << endl;
                     
@@ -155,7 +154,7 @@ public:
         return updated_cache;
     }
     
-    // Extract metadata from a JSON map file
+    // extract metadata from map file
     CacheMetadata extract_metadata_from_file(const string& file_path) {
         CacheMetadata meta;
         
@@ -168,14 +167,14 @@ public:
             meta.files_total = map_data.value("files_total", 0);
             meta.file_size_mb = filesystem::file_size(file_path) / (1024.0 * 1024.0);
             
-            // Try to extract original directory from roots
+            //formatting for the dir
             if (map_data.contains("roots") && map_data["roots"].is_array() && !map_data["roots"].empty()) {
                 meta.original_dir = map_data["roots"][0];
             } else {
                 meta.original_dir = "unknown";
             }
             
-            // Try to extract creation time from filename or use file modification time
+            //creation time extraction
             auto file_time = filesystem::last_write_time(file_path);
             auto time_t = chrono::system_clock::to_time_t(
                 chrono::time_point_cast<chrono::system_clock::duration>(
@@ -189,13 +188,12 @@ public:
             
         } catch (const exception& ex) {
             cout << "Error extracting metadata from " << file_path << ": " << ex.what() << endl;
-            return CacheMetadata{}; // Return empty metadata
+            return CacheMetadata{}; // if problem we return empty
         }
         
         return meta;
     }
     
-    // Display cache contents
     void display_cache(const vector<CacheMetadata>& cache_entries) {
         if (cache_entries.empty()) {
             cout << "\nNo cached map files found." << endl;
@@ -245,7 +243,7 @@ public:
                 return false;
             }
             
-            // Load the hashmap
+            // load map hashmap
             file_index_.clear();
             for (const auto& [filename, paths] : map_data["hashmap"].items()) {
                 file_index_[filename] = paths;
@@ -266,7 +264,7 @@ public:
         }
     }
     
-    // Search for files
+    // map file search
     vector<string> search(const string& query) {
         if (!index_loaded_) {
             cout << "No map file loaded. Please load a map file first." << endl;
@@ -291,7 +289,6 @@ public:
         return results;
     }
     
-    // Get current timestamp
     string get_current_timestamp() {
         auto now = chrono::system_clock::now();
         auto time_t = chrono::system_clock::to_time_t(now);
