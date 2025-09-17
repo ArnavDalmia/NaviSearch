@@ -16,8 +16,8 @@ Once the hashmap is created, it saves to a file. After loading it, you’ll have
 
 🚧 **Currently in active development** - This project is being built in phases for maximum reliability:
 
-- 🔄 **Phase 1**: Core file indexing engine (In Progress)
-- ⏳ **Phase 2**: JSON validation and metrics display  
+- ✅ **Phase 1**: Core file indexing engine (In Progress)
+- ✅ **Phase 2**: JSON validation and metrics display  
 - ⏳ **Phase 3**: Basic Qt GUI with hardcoded file loading
 - ⏳ **Phase 4**: Enhanced GUI with statistics display
 - ⏳ **Phase 5**: File selection and menu system
